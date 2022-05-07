@@ -1,0 +1,32 @@
+.accordionHead{
+    padding:0 20px;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #d7dcdf;
+}
+.downIcon{
+    display: flex;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.aheadContent{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.accorHeading{
+    padding-left: 20px;
+    font-weight: bold;
+    font-size: 18px;
+}
+.accorBodyActive{
+    padding: 30px;
+    display: block;
+}
+.accorBodyDisable{
+    display: none;
+}

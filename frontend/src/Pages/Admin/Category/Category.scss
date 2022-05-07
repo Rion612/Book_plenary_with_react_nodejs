@@ -1,0 +1,66 @@
+.categoryDiv {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.addCategory {
+  margin-top: 20px;
+  height: 150px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 30px;
+  width: 40%;
+}
+.allCategory {
+  margin-left: 20px;
+  margin-top: 20px;
+  min-height: 500px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 30px;
+  width: 40%;
+}
+
+.createCateButton {
+  padding: 20px;
+  background-color: rgb(37, 37, 114);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+.actionButton {
+  padding: 10px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.actionButton.edit{
+    background-color: rgb(36, 36, 218);
+    margin: 5px;
+}
+.actionButton.delete{
+    background-color: rgb(236, 44, 44);
+    margin: 5px;
+}
+table,
+td,
+th {
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  padding: 15px;
+}
+@media screen and (max-width: 900px) {
+  .addCategory,
+  .allCategory {
+    width: 100%;
+  }
+}

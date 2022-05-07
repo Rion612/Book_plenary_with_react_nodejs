@@ -1,0 +1,25 @@
+.hero-text{
+  font-size: 25px;
+  color: #154360;
+  text-align: center;
+
+  button{
+    background-color: #154360;
+    border: none;
+    color: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    font-size: 20px;
+  }
+  
+}
+.hero-image{
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

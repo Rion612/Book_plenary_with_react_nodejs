@@ -1,0 +1,92 @@
+.bDetailsContainer {
+  min-height: 100vh;
+  padding: 50px;
+}
+.bdContent {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.bookImageDiv {
+  padding: 20px;
+}
+.bookInfo {
+  padding: 20px;
+  p {
+    padding-left: 20px;
+    font-size: 30px;
+    font-weight: bold;
+  }
+}
+.starContent {
+  padding-top: 30px;
+  text-align: center;
+}
+.cateName {
+  margin: 20px;
+  padding: 10px 30px;
+  font-size: 15px;
+  background-color: #d7dcdf;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+.reviewButton {
+  margin-top: 100px;
+  cursor: pointer;
+  border: none;
+  padding: 10px 20px;
+  background-color: #19626a;
+  color: #fff;
+  font-size: 18px;
+  width: 50%;
+}
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+}
+.rsButton {
+  margin-top: 20px;
+  cursor: pointer;
+  border: none;
+  padding: 10px 20px;
+  background-color: #19626a;
+  color: #fff;
+  font-size: 18px;
+  width: 30%;
+}
+.alertMessage {
+  padding: 10px;
+  background-color: #0b9706;
+  color: white;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.falertMessage {
+  padding: 10px;
+  background-color: red;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}

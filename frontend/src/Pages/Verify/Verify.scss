@@ -1,0 +1,28 @@
+.verifyDiv {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.verifySuccessContent {
+  height: 300px;
+  width: 900px;
+  padding: 40px;
+}
+.confirmSign {
+  text-align: center;
+}
+.confirmText {
+  text-align: center;
+  margin-top: 20px;
+}
+.loginButton {
+  margin-top: 30px;
+  cursor: pointer;
+  border: none;
+  padding: 10px 20px;
+  background-color: #19626a;
+  color: #fff;
+  font-size: 18px;
+  width: 50%;
+}

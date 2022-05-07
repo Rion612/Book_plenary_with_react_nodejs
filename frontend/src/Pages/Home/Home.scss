@@ -1,0 +1,28 @@
+.homeDiv{
+    min-height: 100vh;
+    padding: 30px 50px;
+
+    button{
+        padding: 10px 30px;
+        background-color: #154360;
+        color: #fff;
+        cursor: pointer;
+        border: none;
+        font-size: 14px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+
+    }
+    button:hover{
+        opacity: 0.9;
+    }
+}
+.cardDiv{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.cardRow{
+    margin:10px;
+}
