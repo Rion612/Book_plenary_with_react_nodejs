@@ -15,6 +15,7 @@ const app: Express = express();
 app.use(cors());
 app.use(bodyparser.json({ limit: '50mb'}))
 app.use(bodyparser.urlencoded({ extended: true, limit: '50mb' }));
+app.use('/public',express.static(path.join(__dirname,'/src/uploads')))
 
 app.use('/users',basicRouter);
 app.use('/',categoryRouter);

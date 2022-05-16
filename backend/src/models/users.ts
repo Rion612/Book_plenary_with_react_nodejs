@@ -16,6 +16,7 @@ users.init(
     },
     {
         sequelize: db,
-        modelName: 'users'
+        modelName: 'users',
+        tableName: 'users'
     }
 )

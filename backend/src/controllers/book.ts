@@ -7,6 +7,8 @@ import categories,{associateWithBooks} from "../models/category";
 import books, { associateWithCategories } from "../models/books";
 import book_categories from "../models/book_categories";
 import db from "../config/db-conn";
+import fs from 'fs'
+import path from "path";
 
 
 class CategoryController{
@@ -44,11 +46,18 @@ class CategoryController{
             let rules = {
                 name: "required|string",
                 writer: "required|string",
-                description: "required|string",
-                bookImage: "required|string"
+                description: "required|string"
+            }
+            if(!req.file){
+                return res.status(200).send({
+                    status: false,
+                    message:"Validation errors occured !",
+                    error: ["Book Image is required !"]
+                })
             }
             const validation = new validator(req.body, rules);
             if(validation.fails()){
+                await HelperController.fileRemoved(path.join(path.dirname(__dirname),'/uploads/') + req.file.filename);
                 return res.status(200).send({
                     status: false,
                     message:"Validation errors occured !",
@@ -59,6 +68,7 @@ class CategoryController{
                 where: { name: req.body.name }
             })
             if(bk) {
+                await HelperController.fileRemoved(path.join(path.dirname(__dirname),'/uploads/') + req.file.filename);
                 return res.status(200).send({
                     status: false,
                     message:"Book already exists.",
@@ -69,34 +79,36 @@ class CategoryController{
                 name: req.body.name,
                 writer: req.body.writer,
                 description: req.body.description,
-                bookImage: req.body.bookImage,
             }
+            obj.bookImage = req.file.filename;
             const create: any = await books.create(obj,{ transaction })
             if(!create){
+                await HelperController.fileRemoved(path.join(path.dirname(__dirname),'/uploads/') + req.file.filename);
                 return res.status(500).send({
                     status: false,
                     message:"Something went wrong! Please try again later.",
                     error: {}
                 })
             }
-            await book_categories.create({books_id: create.id,category_id: 1 }, {transaction})
-            .then((result)=>{
-                transaction.commit();
-                return res.status(200).send({
-                    status: true,
-                    message:"Book created succesfully.",
-                    data: {}
-                })
-            })
-            .catch((error)=>{
-                transaction.rollback();
-                return res.status(500).send({
-                    status: false,
-                    message:"Something went wrong! Please try again later.",
-                    error: error
-                }) 
-            })
-            
+            // await book_categories.create({books_id: create.id,category_id: 1 }, {transaction})
+            // .then((result)=>{
+            //     transaction.commit();
+            //     return res.status(200).send({
+            //         status: true,
+            //         message:"Book created succesfully.",
+            //         data: {}
+            //     })
+            // })
+            // .catch((error)=>{
+            //     transaction.rollback();
+            //     return res.status(500).send({
+            //         status: false,
+            //         message:"Something went wrong! Please try again later.",
+            //         error: error
+            //     }) 
+            // })
+            transaction.commit()
+            return res.send("Data created")
         } catch (error) {
             transaction.rollback();
             return res.status(500).send({

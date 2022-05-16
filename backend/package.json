@@ -15,6 +15,7 @@
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.8",
+    "@types/multer": "^1.4.7",
     "@types/node": "^17.0.23",
     "@types/validatorjs": "^3.15.0",
     "ts-node-dev": "^1.1.8",

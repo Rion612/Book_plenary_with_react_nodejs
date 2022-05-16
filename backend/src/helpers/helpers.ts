@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt"
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken"
+import fs from 'fs'
 class HelperController{
     async encryptPassword(password: string){
         let encrypt_password: any = bcrypt.hashSync(password,5);
@@ -50,6 +51,13 @@ class HelperController{
                 error: {}
             }) 
         }
+    }
+    async fileRemoved(filepath: string){
+        fs.unlink(filepath, (err)=>{
+            if(err){
+                console.log("Image removed failed.");  
+            }
+        })
     }
 
 }
