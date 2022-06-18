@@ -6,9 +6,9 @@ interface userAttributes{
     email: string,
     password: string
 }
-export default class users extends Model<userAttributes>{}
+export default class User extends Model<userAttributes>{}
 
-users.init(
+User.init(
     {
         name: DataTypes.STRING,
         email: DataTypes.STRING,
@@ -16,7 +16,7 @@ users.init(
     },
     {
         sequelize: db,
-        modelName: 'users',
+        modelName: 'User',
         tableName: 'users'
     }
 )

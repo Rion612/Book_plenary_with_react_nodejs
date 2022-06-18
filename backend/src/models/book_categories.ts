@@ -1,28 +1,24 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 import db from "../config/db-conn";
-import books from "./books";
+import Book from "./books";
 
 
 interface bookCategoriesAttributes {
-    id?: number;
     books_id: number;
     category_id: number;
 }
 
-export default class book_categories extends Model<bookCategoriesAttributes>{
+export default class BookCategory extends Model<bookCategoriesAttributes>{
 
 }
-book_categories.init(
+BookCategory.init(
     {
         books_id: DataTypes.NUMBER,
         category_id: DataTypes.NUMBER,
     },
     {
         sequelize: db,
-        modelName: "book_categories",
-        tableName: "book_categories",
+        modelName: "BookCategory",
+        tableName: "book_categories"
     }
 )
-export function associatedBookCategoriesWithBooks() {
-    book_categories.belongsTo(books, { foreignKey: "books_id", as: "books" });
-  }

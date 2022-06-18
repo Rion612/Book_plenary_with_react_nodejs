@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import db from "../config/db-conn";
-import categories from "./category";
+import Category from "./category";
 
 
 interface bookAttributes {
@@ -11,10 +11,8 @@ interface bookAttributes {
     bookImage: string;
 }
 
-export default class books extends Model<bookAttributes>{
-
-}
-books.init(
+export default class Book extends Model<bookAttributes>{}
+Book.init(
     {
         name: DataTypes.STRING,
         writer: DataTypes.STRING,
@@ -23,14 +21,14 @@ books.init(
     },
     {
         sequelize: db,
-        modelName: "books",
+        modelName: "Book",
         tableName: "books",
     }
 )
 export function associateWithCategories(): void {
-    books.belongsToMany(categories, {
+    Book.belongsToMany(Category, {
       through: "book_categories",
       foreignKey: "books_id",
-      as: "book_categories",
+      as: "categories",
     });
   }

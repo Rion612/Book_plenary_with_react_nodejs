@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import categories from "../models/category";
 import validator from "validatorjs";
 import HelperController from "../helpers/helpers";
-import users from "../models/users";
+import User from "../models/users";
 import jwt from "jsonwebtoken"
 class AuthController {
     async signup(req: Request, res: Response) {
@@ -20,7 +20,7 @@ class AuthController {
                     errors: validation.errors.all()
                 })
             }
-            const exist: any = await users.findOne({
+            const exist: any = await User.findOne({
                 attributes: ['id'],
                 where: { email: req.body.email }
             });
@@ -36,7 +36,7 @@ class AuthController {
                 email: req.body.email,
                 password: await HelperController.encryptPassword(req.body.password),
             }
-            const user: any = await users.create(userObj);
+            const user: any = await User.create(userObj);
             if(user) {
                 return res.status(200).send({
                     status: true,
@@ -73,7 +73,7 @@ class AuthController {
                     errors: validation.errors.all()
                 })
             }
-            const exist: any = await users.findOne({
+            const exist: any = await User.findOne({
                 attributes:['id','email','name','is_admin','password'],
                 where: { email: req.body.email }
             });

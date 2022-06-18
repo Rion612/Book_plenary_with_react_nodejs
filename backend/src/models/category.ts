@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import db from "../config/db-conn";
-import books from "./books";
+import Book from "./books";
 
 
 interface categoryAttributes{
@@ -8,10 +8,10 @@ interface categoryAttributes{
     type: string;
 }
 
-export default class categories extends Model<categoryAttributes>{
+export default class Category extends Model<categoryAttributes>{
 
 }
-categories.init(
+Category.init(
     {
         type: DataTypes.STRING
     },
@@ -22,9 +22,9 @@ categories.init(
     }
 )
 export function associateWithBooks(): void {
-    categories.belongsToMany(books, {
+    Category.belongsToMany(Book, {
       through: "book_categories",
       foreignKey: "category_id",
-      as: "book_categories",
+      as: "books",
     });
   }
