@@ -6,6 +6,7 @@ import Category from "./category";
 interface bookAttributes {
     id?: number;
     name: string;
+    slug: string;
     writer: string;
     description: string;
     bookImage: string;
@@ -15,6 +16,7 @@ export default class Book extends Model<bookAttributes>{}
 Book.init(
     {
         name: DataTypes.STRING,
+        slug: DataTypes.STRING,
         writer: DataTypes.STRING,
         description: DataTypes.STRING,
         bookImage: DataTypes.STRING

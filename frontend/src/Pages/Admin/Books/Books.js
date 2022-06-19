@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import AdminLayout from "../../../Components/Admin/Layout/AdminLayout";
 import axios from "../../../Helpers/axios";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import { BsEyeFill } from "react-icons/bs"
 import { BiEdit } from "react-icons/bi";
 import "./Books.scss";
 import { imgUrl } from "../../../urlConfig";
@@ -14,25 +15,32 @@ import "react-toastify/dist/ReactToastify.css";
 const BooksAdmin = () => {
   const location = useLocation();
   console.log(location.pathname);
-  localStorage.setItem('path',location.pathname)
+  localStorage.setItem('path', location.pathname)
   const history = useHistory();
   const [bookList, setBookList] = useState([]);
+  const [page, setPage] = useState(1);
+  const [size,setSize] = useState(5);
+  const [sort,setSort] = useState("latest");
   const user = useSelector((state) => state.user);
-  const [render,setRender] = useState(false);
+  const [render, setRender] = useState(false);
   const token = localStorage.getItem("access_token");
 
   useEffect(async () => {
     try {
-      const res = await axios.get("/get/all/books");
+      const res = await axios.get(`/get/all/books?page=${page}&size=${size}&sorting_type=${sort}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (res.status === 200) {
-        setBookList(res.data.books);
+        setBookList(res.data.data);
       }
     } catch (error) {
       console.log(error.message);
     }
-  }, [render]);
+  }, [render,page,size,sort]);
 
-  const deleteBookHandle = async(item) => {
+  const deleteBookHandle = async (item) => {
     const id = item.id;
     try {
       const res = await axios.post(
@@ -55,7 +63,7 @@ const BooksAdmin = () => {
     }
   };
   const editBookHandle = (item) => {
-    history.push(`/admin/update/books/${item.id}`)
+    history.push(`/admin/update/books/${item.slug}`)
 
   }
   if (!user.authenticate) {
@@ -71,14 +79,29 @@ const BooksAdmin = () => {
             Create book
           </Link>
         </div>
+        <div style={{ display: "flex" }}>
+          <p style={{ fontSize: "19px", padding: "2px 5px 0 0", }}>Number of rows:</p>
+          <select style={{ padding: "5px", fontSize: "1rem" }} onChange={(e)=>setSize(e.target.value)}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={25}>25</option>
+          </select>
+          <p style={{ fontSize: "19px", padding: "2px 5px 0 30px", }}>Order:</p>
+          <select style={{ padding: "5px", fontSize: "1rem" }} onChange={(e)=>setSort(e.target.value)}>
+            <option value={"latest"}>Latest</option>
+            <option value={"oldest"}>Oldest</option>
+            <option value={"a_to_z"}>A_to_Z</option>
+            <option value={"z_to_a"}>Z_to_A</option>
+          </select>
+        </div>
         <table style={{ marginTop: "30px" }}>
           <thead>
             <tr>
               <th>#</th>
               <th>Book name</th>
               <th>Author name</th>
-              <th>Description</th>
-              <th>Book Image</th>
+              <th>Categories</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -89,19 +112,28 @@ const BooksAdmin = () => {
                   <td>{index + 1}</td>
                   <td>{item?.name}</td>
                   <td>{item?.writer}</td>
-                  <td>{ReactHtmlParser((item?.description).slice(0,((item?.description).length/4)))}{'.........'}</td>
                   <td>
-                      <img src={imgUrl+item?.bookImage} alt="Book Image" height="150px" width="150px"/>
+
+                    <div className="book_tag">
+                      {
+                        item?.categories.map((element) => {
+                          return (
+                            <div>{element?.type}</div>
+                          )
+                        })
+                      }
+                    </div>
                   </td>
                   <td style={{ fontSize: "30px" }}>
                     <RiDeleteBin5Fill
-                      style={{ cursor: "pointer",margin:'10px' }}
-                      onClick={()=>deleteBookHandle(item)}
+                      style={{ cursor: "pointer", margin: '10px' }}
+                      onClick={() => deleteBookHandle(item)}
                     />
                     <BiEdit
-                      style={{ cursor: "pointer",margin:'10px' }}
-                      onClick={()=>editBookHandle(item)}
+                      style={{ cursor: "pointer", margin: '10px' }}
+                      onClick={() => editBookHandle(item)}
                     />
+                    <BsEyeFill style={{ cursor: "pointer", margin: '10px' }} />
                   </td>
                 </tr>
               );
