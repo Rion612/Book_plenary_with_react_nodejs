@@ -46,8 +46,8 @@ function App() {
         <Route path="/admin/users" exact component={User} />
         <Route path="/admin/create/books" component={CreateBook} />
         <Route path="/admin/update/books/:id" exact component={updateBook} />
-        <PrivateRoute path="/books/category/:id" exact component={BookCat} />
-        <PrivateRoute path="/book/details/:id" exact component={BookDetail} />
+        <Route path="/books/category/:id" exact component={BookCat} />
+        <Route path="/book/details/:id" exact component={BookDetail} />
       </Switch>
     </div>
   );

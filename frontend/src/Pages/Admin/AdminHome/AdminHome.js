@@ -25,10 +25,6 @@ const AdminHome = () => {
       console.log(error.message);
     }
   }, []);
-
-  if (!user.authenticate) {
-    history.push("/login");
-  }
   return (
     <div>
       <AdminLayout>

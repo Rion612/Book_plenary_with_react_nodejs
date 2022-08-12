@@ -37,9 +37,9 @@ const UpdateBook = (props) => {
     try {
       const res = await axios.get(`/get/book/${bookId}`);
       if (res.status === 200) {
-        setName(res.data.book.name);
-        setWriter(res.data.book.writer);
-        setDescription(res.data.book.description)
+        setName(res.data.data.name);
+        setWriter(res.data.data.writer);
+        setDescription(res.data.data.description)
       }
     } catch (error) {
       console.log(error.message);
@@ -63,7 +63,9 @@ const UpdateBook = (props) => {
     setDescription(data);
   };
   const getSelectValue = (e) => {
+    console.log(e);
     setCategories(Array.isArray(e) ? e.map((x) => x.value) : []);
+    console.log(categories);
   };
   
   const bookFormSubmit = async(event) => {

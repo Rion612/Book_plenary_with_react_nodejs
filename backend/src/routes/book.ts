@@ -28,5 +28,14 @@ router.post(
     upload.single('bookImage'),
     BookController.createBook
 );
+router.delete(
+  '/delete/book/:id',
+  HelperController.validate,
+  BookController.deleteBook
+)
+router.get(
+  '/get/book/:slug',
+  BookController.getBookDetails
+)
 
 export default router

@@ -14,8 +14,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const BooksAdmin = () => {
   const location = useLocation();
-  console.log(location.pathname);
-  localStorage.setItem('path', location.pathname)
   const history = useHistory();
   const [bookList, setBookList] = useState([]);
   const [page, setPage] = useState(1);
@@ -43,9 +41,8 @@ const BooksAdmin = () => {
   const deleteBookHandle = async (item) => {
     const id = item.id;
     try {
-      const res = await axios.post(
-        `/admin/delete/book/${id}`,
-        {},
+      const res = await axios.delete(
+        `/delete/book/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,10 +61,6 @@ const BooksAdmin = () => {
   };
   const editBookHandle = (item) => {
     history.push(`/admin/update/books/${item.slug}`)
-
-  }
-  if (!user.authenticate) {
-    history.push("/login");
   }
   return (
     <AdminLayout>

@@ -13,7 +13,7 @@ import slugify from "slugify";
 import { global_variable } from "../helpers/global_variables";
 associateWithBooks()
 associateWithCategories();
-class CategoryController {
+class BookController {
     async getAllBooks(req: Request, res: Response) {
         try {
             const page: any = req.query.page ? req.query.page : global_variable.page;
@@ -73,6 +73,7 @@ class CategoryController {
     async createBook(req: Request, res: Response) {
         const transaction: any = await db.transaction({ autocommit: false })
         let filename: any;
+        
         try {
             let rules = {
                 name: "required|string",
@@ -96,8 +97,10 @@ class CategoryController {
                     error: validation.errors.all()
                 })
             }
+            let categoriesObj: any = []
+            const categories = (typeof req.body.categories === "string") ? JSON.parse(req.body.categories) : req.body.categories;
             const bk: any = await Book.findOne({
-                where: { name: req.body.name }
+                where: { slug: slugify(req.body.name) }
             })
             if (bk) {
                 await HelperController.fileRemoved(path.join(path.dirname(__dirname), '/uploads/') + req.file.filename);
@@ -108,13 +111,14 @@ class CategoryController {
                 })
             }
             const obj: any = {
-                name: req.body.name,
+                name: (req.body.name).trim(),
                 slug: slugify(req.body.name),
                 writer: req.body.writer,
                 description: req.body.description,
             }
             obj.bookImage = req.file.filename;
             const create: any = await Book.create(obj, { transaction })
+            
             if (!create) {
                 await HelperController.fileRemoved(path.join(path.dirname(__dirname), '/uploads/') + req.file.filename);
                 return res.status(500).send({
@@ -123,7 +127,14 @@ class CategoryController {
                     error: {}
                 })
             }
-            await book_categories.create({ books_id: create.id, category_id: 2 }, { transaction })
+            categories.map((item: any)=>{
+                categoriesObj.push({
+                    books_id: create.id,
+                    category_id: item
+                })
+            })
+            
+            await book_categories.bulkCreate(categoriesObj, { transaction })
                 .then((result) => {
                     transaction.commit();
                     return res.status(200).send({
@@ -192,22 +203,57 @@ class CategoryController {
         }
 
     }
-    async deleteCategory(req: Request, res: Response) {
+    async deleteBook(req: Request, res: Response) {
         try {
             const id: any = req.params.id;
-            const cat: any = await Category.findByPk(id);
-            if (!cat) {
+            const book: any = await Book.findByPk(id);
+            if (!book) {
                 return res.status(200).send({
                     status: false,
-                    message: "Category is not found.",
+                    message: "Book is not found.",
                     error: {}
                 })
             }
-            await cat.destroy();
+            await book.destroy();
+            await HelperController.fileRemoved(path.join(path.dirname(__dirname), '/uploads/') + book.bookImage);
             return res.status(200).send({
                 status: true,
-                message: "Category is successfully deleted.",
+                message: "Book is successfully deleted.",
                 data: {}
+            })
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message: "Something went wrong! Please try again later.",
+                error: error
+            })
+        }
+    }
+    async getBookDetails(req: Request, res: Response) {
+        try {
+            const book_slug: any = req.params.slug;
+            const book: any = await Book.findOne({ 
+                where: {slug:book_slug },
+                include: [
+                    {
+                        model: Category,
+                        as: "categories",
+                        attributes: ['id', 'type'],
+                        through: { attributes: [] }
+                    }
+                ]
+            });
+            if (!book) {
+                return res.status(200).send({
+                    status: false,
+                    message: "Book is not found.",
+                    error: {}
+                })
+            }
+            return res.status(200).send({
+                status: true,
+                message: "Book is found.",
+                data: book
             })
         } catch (error) {
             return res.status(500).send({
@@ -219,4 +265,4 @@ class CategoryController {
     }
 
 }
-export default new CategoryController()
+export default new BookController()

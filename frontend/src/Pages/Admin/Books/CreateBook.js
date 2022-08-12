@@ -20,7 +20,8 @@ const CreateBook = () => {
   const [name, setName] = useState("");
   const [writer, setWriter] = useState("");
   const [description, setDescription] = useState("");
-  const [categories, setCategories] = useState();
+  const [categories, setCategories] = useState([]);
+  const [catForForm, setCatForForm] = useState([]);
   const [bookImage, setBookImage] = useState("");
   const cate = useSelector((state) => state.category.categories);
   const token = localStorage.getItem("access_token");
@@ -47,21 +48,27 @@ const CreateBook = () => {
     setDescription(data);
   };
   const getSelectValue = (e) => {
-    setCategories(Array.isArray(e) ? e.map((x) => x.value) : []);
+    setCategories(e)
+    let cat = [];
+    e.map((item)=>{
+      cat.push(item.value)
+    })
+    setCatForForm(cat)
   };
   
   const bookFormSubmit = async(event) => {
+    console.log(categories);
     event.preventDefault();
     const form = new FormData();
     form.append("name", name);
     form.append("writer", writer);
     form.append("description", description);
-    form.append("categories", categories);
-    form.append("image", bookImage);
+    form.append("categories", JSON.stringify(catForForm));
+    form.append("bookImage", bookImage);
 
       try {
         const res = await axios.post(
-          "/admin/create/books",form,
+          "/create/book",form,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -71,7 +78,7 @@ const CreateBook = () => {
         if (res.status === 200) {
           toast.success(res.data.message);
           setBookImage(null);
-          setCategories('');
+          setCategories([]);
           setDescription('');
           setName('');
           setWriter('');
@@ -81,9 +88,6 @@ const CreateBook = () => {
         toast.error(error.message);
       }
   };
-  if (!user.authenticate) {
-    return <Redirect to={'/login'}/>
-  }
 
   return (
     <AdminLayout>
@@ -93,7 +97,7 @@ const CreateBook = () => {
           <Link to={"/admin/books"}>Books</Link>
           {"/"}Create book
         </div>
-        <form className="bookCreateForm" onSubmit={bookFormSubmit}>
+        <form className="bookCreateForm" onSubmit={bookFormSubmit} id="create-book-form">
           <h2 style={{ textAlign: "center" }}>Create book</h2>
           <label>Book Name:</label>
           <Input
@@ -126,7 +130,7 @@ const CreateBook = () => {
           </div>
           <div style={{ marginTop: "10px" }}>
             <label>Select category:</label>
-            <Select options={makeOption()} isMulti onChange={getSelectValue} />
+            <Select options={makeOption()} isMulti onChange={getSelectValue} value={categories} />
           </div>
 
           <button className="submitButton">Submit</button>

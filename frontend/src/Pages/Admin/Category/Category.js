@@ -79,9 +79,6 @@ const Category = () => {
       }
     }
   };
-  if (!user.authenticate) {
-    history.push("/login");
-  }
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [editCategory, setEditCategory] = useState("")
   function openModal() {
