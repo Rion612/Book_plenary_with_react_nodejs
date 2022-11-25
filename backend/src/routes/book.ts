@@ -3,6 +3,7 @@ import BookController from '../controllers/book';
 import HelperController from '../helpers/helpers';
 import multer from 'multer';
 import path from  'path'
+import multerUploadMiddleware from '../middlewares/upload.middleware';
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -25,8 +26,14 @@ router.get(
 router.post(
     '/create/book',
     HelperController.validate,
-    upload.single('bookImage'),
+    multerUploadMiddleware,
     BookController.createBook
+);
+router.put(
+  '/update/book',
+  HelperController.validate,
+  multerUploadMiddleware,
+  BookController.updateBook
 );
 router.delete(
   '/delete/book/:id',

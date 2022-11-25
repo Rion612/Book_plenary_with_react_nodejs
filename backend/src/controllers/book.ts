@@ -72,25 +72,45 @@ class BookController {
     }
     async createBook(req: Request, res: Response) {
         const transaction: any = await db.transaction({ autocommit: false })
-        let filename: any;
-        
+        const basePath: string = path.join(path.dirname(__dirname), '/uploads/');
+        let bookImageName: string = "";
+        let bookFileName: string = "";
         try {
             let rules = {
                 name: "required|string",
                 writer: "required|string",
                 description: "required|string"
             }
-            if (!req.file) {
-                return res.status(200).send({
+            const files: any = req.files;
+            if (files && !Object.keys(files).length) {
+                return res.status(422).send({
+                    status: false,
+                    message: "Validation errors occured !",
+                    error: ["Book Image is required !", "Book file is required!"]
+                })
+            }
+            if(!files.bookImage) {
+                await HelperController.fileRemoved(basePath + files.bookFile[0].filename);
+                return res.status(422).send({
                     status: false,
                     message: "Validation errors occured !",
                     error: ["Book Image is required !"]
                 })
             }
-            filename = req.file.filename;
+            if(!files.bookFile) {
+                await HelperController.fileRemoved(basePath + files.bookImage[0].filename);
+                return res.status(422).send({
+                    status: false,
+                    message: "Validation errors occured !",
+                    error: ["Book file is required !"]
+                })
+            }
+            bookImageName = files.bookImage[0].filename;
+            bookFileName = files.bookFile[0].filename;
             const validation = new validator(req.body, rules);
             if (validation.fails()) {
-                await HelperController.fileRemoved(path.join(path.dirname(__dirname), '/uploads/') + req.file.filename);
+                await HelperController.fileRemoved(basePath + bookImageName);
+                await HelperController.fileRemoved(basePath + bookFileName);
                 return res.status(200).send({
                     status: false,
                     message: "Validation errors occured !",
@@ -103,7 +123,8 @@ class BookController {
                 where: { slug: slugify(req.body.name) }
             })
             if (bk) {
-                await HelperController.fileRemoved(path.join(path.dirname(__dirname), '/uploads/') + req.file.filename);
+                await HelperController.fileRemoved(basePath + bookImageName);
+                await HelperController.fileRemoved(basePath + bookFileName);
                 return res.status(200).send({
                     status: false,
                     message: "Book already exists.",
@@ -116,11 +137,13 @@ class BookController {
                 writer: req.body.writer,
                 description: req.body.description,
             }
-            obj.bookImage = req.file.filename;
+            obj.bookImage = bookImageName;
+            obj.bookFile = bookFileName;
             const create: any = await Book.create(obj, { transaction })
             
             if (!create) {
-                await HelperController.fileRemoved(path.join(path.dirname(__dirname), '/uploads/') + req.file.filename);
+                await HelperController.fileRemoved(basePath + bookImageName);
+                await HelperController.fileRemoved(basePath + bookFileName);
                 return res.status(500).send({
                     status: false,
                     message: "Something went wrong! Please try again later.",
@@ -144,7 +167,8 @@ class BookController {
                     })
                 })
                 .catch(async (error) => {
-                    await HelperController.fileRemoved(path.join(path.dirname(__dirname), '/uploads/') + filename);
+                    await HelperController.fileRemoved(basePath + bookImageName);
+                    await HelperController.fileRemoved(basePath + bookFileName);
                     transaction.rollback();
                     return res.status(500).send({
                         status: false,
@@ -153,7 +177,8 @@ class BookController {
                     })
                 })
         } catch (error) {
-            await HelperController.fileRemoved(path.join(path.dirname(__dirname), '/uploads/') + filename);
+            await HelperController.fileRemoved(basePath + bookImageName);
+            await HelperController.fileRemoved(basePath + bookFileName);
             transaction.rollback();
             return res.status(500).send({
                 status: false,
@@ -162,6 +187,143 @@ class BookController {
             })
         }
 
+    }
+    async updateBook(req: Request, res: Response) {
+        const transaction: any = await db.transaction({ autocommit: false })
+        const basePath: string = path.join(path.dirname(__dirname), '/uploads/');
+        let bookImageName = "";
+        let bookFileName = "";
+        let files: any;
+        try {
+            let rules = {
+                id: "required"
+            }
+            const validation = new validator(req.body, rules);
+            if (validation.fails()) {
+                if(files && Object.keys(files).length) {
+                    if(files.bookImage) {
+                        await HelperController.fileRemoved(basePath + bookImageName);
+                    }
+                    if(files.bookFile) {
+                        await HelperController.fileRemoved(basePath + bookFileName);
+                    }
+                }
+                return res.status(422).send({
+                    status: false,
+                    message: "Validation errors occured !",
+                    error: validation.errors.all()
+                })
+            }
+            const bookFound: any = await Book.findOne({
+                where: { id: req.body.id }
+            });
+            if(!bookFound) {
+                return res.status(400).send({
+                    status: false,
+                    message: "The book is not found.",
+                    error: {}
+                })
+            }
+            files = req.files;
+            if(files.bookImage) {
+                bookImageName = files.bookImage[0].filename;
+            }
+            if(files.bookFile) {
+                bookFileName = files.bookFile[0].filename;
+            }
+            let categoriesObj: any = []
+            const categories =
+              typeof req.body.categories === "string"
+                ? JSON.parse(req.body.categories)
+                : req.body.categories;
+            const obj: any = {
+                name: (req.body.name).trim(),
+                slug: slugify(req.body.name),
+                writer: req.body.writer,
+                description: req.body.description,
+            }
+            if(req.body.name) {
+                bookFound.name = (req.body.name).trim();
+            }
+            if(req.body.slug) {
+                bookFound.slug = slugify(req.body.name);
+            }
+            if(req.body.writer) {
+                bookFound.writer = req.body.writer;
+            }
+            if(req.body.description) {
+                bookFound.description = req.body.description;
+            }
+            if(files.bookImage) {
+                bookFound.bookImage = bookImageName;
+            }
+            if(files.bookFile){
+                bookFound.bookFile = bookFileName;
+            }
+            const create: any = await bookFound.save({ transaction: transaction})
+            if (!create) {
+                if(files && Object.keys(files).length) {
+                    if(files.bookImage) {
+                        await HelperController.fileRemoved(basePath + bookImageName);
+                    }
+                    if(files.bookFile) {
+                        await HelperController.fileRemoved(basePath + bookFileName);
+                    }
+                }
+                return res.status(500).send({
+                    status: false,
+                    message: "Something went wrong! Please try again later.",
+                    error: {}
+                })
+            }
+            categories.map((item: any)=>{
+                categoriesObj.push({
+                    books_id: create.id,
+                    category_id: item
+                })
+            })
+            await book_categories.bulkCreate(categoriesObj, { transaction })
+                .then((result) => {
+                    transaction.commit();
+                    return res.status(200).send({
+                        status: true,
+                        message: "Book updated succesfully.",
+                        data: {}
+                    })
+                })
+                .catch(async (error) => {
+                    if(files && Object.keys(files).length) {
+                        if(files.bookImage) {
+                            await HelperController.fileRemoved(basePath + bookImageName);
+                        }
+                        if(files.bookFile) {
+                            await HelperController.fileRemoved(basePath + bookFileName);
+                        }
+                    }
+                    transaction.rollback();
+                    return res.status(500).send({
+                        status: false,
+                        message: "Something went wrong! Please try again later.",
+                        error: error
+                    })
+                })
+        } catch (error) {
+            console.log(error)
+            if(files && Object.keys(files).length) {
+                if(files.bookImage) {
+                    await HelperController.fileRemoved(basePath + bookImageName);
+                }
+                if(files.bookFile) {
+                    await HelperController.fileRemoved(basePath + bookFileName);
+                }
+            }
+            transaction.rollback();
+            return res.status(500).send({
+                status: false,
+                message: "Something went wrong! Please try again later.",
+                error: error
+            })
+        }
     }
     async editCategory(req: Request, res: Response) {
         try {
@@ -250,10 +412,24 @@ class BookController {
                     error: {}
                 })
             }
+            const categories: any = [];
+            book.categories.map((item: any)=>{
+                categories.push(item.id)
+            })
+            const response = {
+              id: book.id,
+              name: book.name,
+              slug: book.slug,
+              writer: book.writer,
+              description: book.description,
+              bookImage: book.bookImage,
+              bookFile: book.bookFile,
+              categories: categories
+            };
             return res.status(200).send({
                 status: true,
                 message: "Book is found.",
-                data: book
+                data: response
             })
         } catch (error) {
             return res.status(500).send({

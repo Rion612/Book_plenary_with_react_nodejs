@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link,useHistory} from "react-router-dom";
+import { Link,Redirect,useHistory} from "react-router-dom";
 import AdminLayout from "../../../Components/Admin/Layout/AdminLayout";
 import Input from "../../../Components/UI/Input";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -16,14 +16,17 @@ const UpdateBook = (props) => {
   const history = useHistory();
   const user = useSelector((state) => state.user);
   const book = useSelector(state=>state.book);
+  const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [writer, setWriter] = useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState();
   const [bookImage, setBookImage] = useState("");
+  const [bookFile, setBookFile] = useState("");
   const cate = useSelector((state) => state.category.categories);
   const token = localStorage.getItem("access_token");
   const bookId = props.match.params.id;
+  const [render,setRender] = useState(false);
 
   useEffect(() => {
     dispatch(getAllCategories());
@@ -37,18 +40,20 @@ const UpdateBook = (props) => {
     try {
       const res = await axios.get(`/get/book/${bookId}`);
       if (res.status === 200) {
-        setName(res.data.data.name);
-        setWriter(res.data.data.writer);
-        setDescription(res.data.data.description)
+          setId(res.data.data.id)
+          setName(res.data.data.name);
+          setWriter(res.data.data.writer);
+          setDescription(res.data.data.description)
+          setCategories(res.data.data.categories)
+        }
+      } catch (error) {
+        console.log(error.message);
       }
-    } catch (error) {
-      console.log(error.message);
-    }
-  }, []);
+    },[render]);
 
-  const makeOption = () => {
+  const makeOption = (data) => {
     let options = [];
-    for (let i = 0; i < cate.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       options.push({
         value: cate[i].id,
         label: cate[i].type,
@@ -69,17 +74,23 @@ const UpdateBook = (props) => {
   };
   
   const bookFormSubmit = async(event) => {
+    console.log(categories)
     event.preventDefault();
     const form = new FormData();
+    form.append("id", id);
     form.append("name", name);
     form.append("writer", writer);
     form.append("description", description);
-    form.append("categories", categories);
-    form.append("image", bookImage);
+    form.append("categories", JSON.stringify(categories));
+    form.append("bookImage", bookImage);
+    form.append("bookFile", bookFile);
+    for (const value of form.values()) {
+      console.log(value);
+    }
 
       try {
-        const res = await axios.post(
-          "/admin/create/books",form,
+        const res = await axios.put(
+          "/update/book",form,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -88,12 +99,8 @@ const UpdateBook = (props) => {
         );
         if (res.status === 200) {
           toast.success(res.data.message);
-          setBookImage(null);
-          setCategories('');
-          setDescription('');
-          setName('');
-          setWriter('');
-          event.target.reset();
+          setRender(!render)
+          history.push("/admin/books")
         }
       } catch (error) {
         toast.error(error.message);
@@ -140,8 +147,16 @@ const UpdateBook = (props) => {
             />
           </div>
           <div style={{ marginTop: "10px" }}>
+            <label>Select book file: </label>
+            <input
+              type="file"
+              name="bookFile"
+              onChange={(e) => setBookFile(e.target.files[0])}
+            />
+          </div>
+          <div style={{ marginTop: "10px" }}>
             <label>Select category:</label>
-            <Select options={makeOption()} isMulti onChange={getSelectValue} />
+            <Select options={makeOption(cate)} isMulti onChange={getSelectValue}/>
           </div>
 
           <button className="submitButton">Update</button>

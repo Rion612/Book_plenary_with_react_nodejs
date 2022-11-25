@@ -23,6 +23,7 @@ const CreateBook = () => {
   const [categories, setCategories] = useState([]);
   const [catForForm, setCatForForm] = useState([]);
   const [bookImage, setBookImage] = useState("");
+  const [bookFile, setBookFile] = useState("");
   const cate = useSelector((state) => state.category.categories);
   const token = localStorage.getItem("access_token");
   console.log(user)
@@ -65,6 +66,7 @@ const CreateBook = () => {
     form.append("description", description);
     form.append("categories", JSON.stringify(catForForm));
     form.append("bookImage", bookImage);
+    form.append("bookFile", bookFile);
 
       try {
         const res = await axios.post(
@@ -129,10 +131,17 @@ const CreateBook = () => {
             />
           </div>
           <div style={{ marginTop: "10px" }}>
+            <label>Select book's PDF file: </label>
+            <input
+              type="file"
+              name="bookFile"
+              onChange={(e) => setBookFile(e.target.files[0])}
+            />
+          </div>
+          <div style={{ marginTop: "10px" }}>
             <label>Select category:</label>
             <Select options={makeOption()} isMulti onChange={getSelectValue} value={categories} />
           </div>
-
           <button className="submitButton">Submit</button>
         </form>
       </div>

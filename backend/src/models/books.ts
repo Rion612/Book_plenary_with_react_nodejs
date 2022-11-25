@@ -10,6 +10,7 @@ interface bookAttributes {
     writer: string;
     description: string;
     bookImage: string;
+    bookFile: string;
 }
 
 export default class Book extends Model<bookAttributes>{}
@@ -19,7 +20,8 @@ Book.init(
         slug: DataTypes.STRING,
         writer: DataTypes.STRING,
         description: DataTypes.STRING,
-        bookImage: DataTypes.STRING
+        bookImage: DataTypes.STRING,
+        bookFile: DataTypes.STRING
     },
     {
         sequelize: db,
