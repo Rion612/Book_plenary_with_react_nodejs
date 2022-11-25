@@ -141,6 +141,41 @@ class AuthController {
             })
         }
     }
-
+    async getAllUsers(req: Request, res:Response){
+        try {
+            const users: any = await User.findAll({ where: { is_admin: 0}})
+            return res.status(200).send({
+                status: true,
+                message: "Data found.",
+                data: users
+            })
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message: "Something is wrong! Please try again later.",
+                error: error
+            })
+        }
+    }
+    async deleteUser(req: Request, res:Response){
+        try {
+            await User.destroy({
+                where: {
+                    id: req.params.id
+                }
+            })
+            return res.status(200).send({
+                status: true,
+                message: "User is deleted successfully.",
+                data: {}
+            })
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message: "Something is wrong! Please try again later.",
+                error: error
+            })
+        }
+    }
 }
 export default new AuthController()

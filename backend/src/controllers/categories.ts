@@ -4,6 +4,10 @@ import HelperController from "../helpers/helpers";
 import users from "../models/users";
 import jwt from "jsonwebtoken"
 import categories from "../models/category";
+import User from "../models/users";
+import Book from "../models/books";
+import Category from "../models/category";
+import { Op } from "sequelize/types";
 
 
 class CategoryController{
@@ -125,6 +129,32 @@ class CategoryController{
                 status: true,
                 message:"Category is successfully deleted.",
                 data: {}
+            })
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message:"Something went wrong! Please try again later.",
+                error: error
+            })
+        }
+    }
+    async getAllEntityCount(req: Request, res: Response) {
+        try {
+            const users: any = await User.findAll({
+                where: {
+                    is_admin: 0
+                }
+            });
+            const books: any = await Book.findAll({});
+            const categories: any = await Category.findAll({});
+            return res.status(200).send({
+                status: true,
+                message:"Data found.",
+                data: {
+                    users: users.length,
+                    books: books.length,
+                    categories: categories.length
+                }
             })
         } catch (error) {
             return res.status(500).send({

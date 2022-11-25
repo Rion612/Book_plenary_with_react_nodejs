@@ -16,4 +16,15 @@ router.post(
     HelperController.validate,
     AuthController.logout
 );
+
+router.get(
+    '/get/all',
+    HelperController.validate,
+    AuthController.getAllUsers
+);
+router.delete(
+    '/delete/:id',
+    HelperController.validate,
+    AuthController.deleteUser
+);
 export default router

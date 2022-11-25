@@ -23,4 +23,9 @@ router.delete(
     HelperController.validate,
     CategoryController.deleteCategory
 )
+
+router.get(
+    '/get/all/entity/count',
+    CategoryController.getAllEntityCount
+)
 export default router

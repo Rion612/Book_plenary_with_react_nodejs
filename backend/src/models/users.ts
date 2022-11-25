@@ -2,9 +2,11 @@ import { Model, DataTypes } from "sequelize";
 import db from "../config/db-conn";
 
 interface userAttributes{
+    id?: number;
     name: string,
     email: string,
-    password: string
+    password: string,
+    is_admin?: boolean
 }
 export default class User extends Model<userAttributes>{}
 

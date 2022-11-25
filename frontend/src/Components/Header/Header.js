@@ -43,6 +43,20 @@ const Header = (props) => {
             >
               <li>Books</li>
             </NavLink>
+            <NavLink
+              to="/books"
+              activeStyle={{ color: "blue" }}
+              className="nav-link"
+            >
+              <li>Contact</li>
+            </NavLink>
+            <NavLink
+              to="/books"
+              activeStyle={{ color: "blue" }}
+              className="nav-link"
+            >
+              <li>Community</li>
+            </NavLink>
             {user.authenticate ? (
               <>
                 <NavLink

@@ -16,9 +16,9 @@ const AdminHome = () => {
     try {
       const res = await axios.get("/get/all/entity/count");
       if (res.status === 200) {
-        setTotalBook(res.data.totalBooks);
-        setTotalCategory(res.data.totalCategories);
-        setTotalUser(res.data.totalUsers);
+        setTotalBook(res.data.data.books);
+        setTotalCategory(res.data.data.categories);
+        setTotalUser(res.data.data.users);
 
       }
     } catch (error) {

@@ -17,9 +17,13 @@ const User = () => {
 
   useEffect(async () => {
     try {
-      const res = await axios.get("/get/all/users");
+      const res = await axios.get("/users/get/all", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (res.status === 200) {
-        setUsersList(res.data.users);
+        setUsersList(res.data.data);
       }
     } catch (error) {
       console.log(error.message);
@@ -29,9 +33,8 @@ const User = () => {
   const deleteUser = async (item) => {
     const id = item.id;
     try {
-      const res = await axios.post(
-        `/admin/delete/user/${id}`,
-        {},
+      const res = await axios.delete(
+        `/users/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
