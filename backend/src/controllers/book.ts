@@ -46,14 +46,16 @@ class BookController {
                         model: Category,
                         as: "categories",
                         attributes: ['id', 'type'],
-                        through: { attributes: [] }
+                        through: { attributes: [] },
+                        required: false
                     }
                 ],
                 limit,
                 offset,
                 order: [
                     [order_by, order]
-                ]
+                ],
+                distinct: true
             })
             return res.status(200).send({
                 status: true,
@@ -439,6 +441,14 @@ class BookController {
             })
         }
     }
+    // async getBooksByCategory(req: Request, res: Response) {
+    //     try {
+    //         const id = req.params.category_id;
+    //         const books = await 
+    //     } catch (error) {
+            
+    //     }
+    // }
 
 }
 export default new BookController()

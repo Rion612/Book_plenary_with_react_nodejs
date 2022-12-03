@@ -20,7 +20,6 @@ const upload = multer({ storage: storage })
 
 router.get(
     '/get/all/books',
-    HelperController.validate,
     BookController.getAllBooks
 );
 router.post(

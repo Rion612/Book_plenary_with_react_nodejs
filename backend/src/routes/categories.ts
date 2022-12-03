@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get(
     '/get/all/categories',
-    HelperController.validate,
     CategoryController.getAllCategories
 );
 router.post(
