@@ -115,7 +115,7 @@ const Book = (props) => {
             </div>
             <div className="bookContent21">
               <h4 className="Booktitle">Recent added books</h4>
-              {book.books.slice(0, 5).map((item, index) => {
+              {book.books.slice(0, 2).reverse().map((item, index) => {
                 return (
                   <div className="cardRow" key={index}>
                     <Card

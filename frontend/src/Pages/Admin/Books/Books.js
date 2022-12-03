@@ -60,7 +60,7 @@ const BooksAdmin = () => {
     }
   };
   const editBookHandle = (item) => {
-    history.push(`/admin/update/books/${item.slug}`)
+    history.push(`/admin/update/books/${item.id}`)
   }
   return (
     <AdminLayout>

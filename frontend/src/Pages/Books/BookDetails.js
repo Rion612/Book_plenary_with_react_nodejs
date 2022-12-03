@@ -17,7 +17,9 @@ import Footer from "../../Components/Footer/Footer";
 import ReactHtmlParser from "react-html-parser";
 import {FiDownload} from "react-icons/fi";
 import { BsFillShareFill } from "react-icons/bs";
-import { RiBookmark3Line } from "react-icons/ri"
+import { RiBookmark3Line } from "react-icons/ri";
+import path from "path";
+import fs from "fs"
 
 const BookDetail = (props) => {
   const dispatch = useDispatch();
@@ -57,19 +59,33 @@ const BookDetail = (props) => {
   useEffect(() => {
     dispatch(getAllReviews());
   }, [render]);
-  useEffect(async () => {
-    try {
-      const res = await axios.get("/get/all/users");
-      if (res.status === 200) {
-        setUsersList(res.data.users);
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  }, []);
+  // useEffect(async () => {
+  //   try {
+  //     const res = await axios.get("/get/all/users");
+  //     if (res.status === 200) {
+  //       setUsersList(res.data.users);
+  //     }
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }, []);
   const categoryHandle = (item) => {
     history.push(`/books/category/${item.id}`);
   };
+
+  const downloadBook = (item) => {
+    fetch(imgUrl+item).then(response => {
+      response.blob().then(blob => {
+          // Creating new object of PDF file
+          const fileURL = window.URL.createObjectURL(blob);
+          // Setting various property values
+          let alink = document.createElement('a');
+          alink.href = fileURL;
+          alink.download = item;
+          alink.click();
+      })
+  })
+  }
 
   const reviewSumitHandle = async () => {
     const obj = {
@@ -169,11 +185,14 @@ const BookDetail = (props) => {
                   })}
                 </div>
                 <div style={{ display: "flex", gap: "10px", marginTop: "20px"}}>
-                  <button className="bookReadAndDownloadButton1">
+                  <button className="bookReadAndDownloadButton1"
+                    onClick={()=>downloadBook(b?.bookFile)}
+                  >
                     <FiDownload size={20}/>
                     <p>Download</p>
                   </button>
-                  <button className="bookReadAndDownloadButton2">
+                  <button className="bookReadAndDownloadButton2"
+                  onClick={()=>window.open(imgUrl + b?.bookFile)}>
                     <FaBookReader size={20} />
                     <p>Read book</p>
                   </button>
