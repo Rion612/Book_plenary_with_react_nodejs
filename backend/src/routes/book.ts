@@ -40,7 +40,7 @@ router.delete(
   BookController.deleteBook
 )
 router.get(
-  '/get/book/:slug',
+  '/get/book/:id',
   BookController.getBookDetails
 )
 

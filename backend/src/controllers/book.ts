@@ -122,7 +122,7 @@ class BookController {
             let categoriesObj: any = []
             const categories = (typeof req.body.categories === "string") ? JSON.parse(req.body.categories) : req.body.categories;
             const bk: any = await Book.findOne({
-                where: { slug: slugify(req.body.name) }
+                where: { name: req.body.name }
             })
             if (bk) {
                 await HelperController.fileRemoved(basePath + bookImageName);
@@ -379,7 +379,10 @@ class BookController {
                 })
             }
             await book.destroy();
-            await HelperController.fileRemoved(path.join(path.dirname(__dirname), '/uploads/') + book.bookImage);
+            const bookImagePath = path.join(path.dirname(__dirname), "uploads", book.bookImage);
+            const bookFilePath = path.join(path.dirname(__dirname), "uploads", book.bookFile);
+            await HelperController.fileRemoved(bookImagePath);
+            await HelperController.fileRemoved(bookFilePath);
             return res.status(200).send({
                 status: true,
                 message: "Book is successfully deleted.",
@@ -395,9 +398,9 @@ class BookController {
     }
     async getBookDetails(req: Request, res: Response) {
         try {
-            const book_slug: any = req.params.slug;
+            const id: any = req.params.id;
             const book: any = await Book.findOne({ 
-                where: {slug:book_slug },
+                where: {id:id },
                 include: [
                     {
                         model: Category,

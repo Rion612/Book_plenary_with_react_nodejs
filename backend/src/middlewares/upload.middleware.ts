@@ -10,8 +10,8 @@ const storage = multer.diskStorage({
         cb(null, uploadDirectory);
     },
     filename: function (req, file, cb) {
-        const prefix = Date.now();
-        cb(null, prefix + path.extname(file.originalname));
+        const fileName = file.originalname.toLowerCase().replace(/\s/g, '-');
+        cb(null, fileName);
     }
 });
 
@@ -83,7 +83,7 @@ function makeMulterUploadMiddleware(multerUploadFunction: any) {
 
 const upload = multer({
     storage,
-    limits: { fileSize: 50000000 },
+    limits: { fileSize: 100000000 },
     fileFilter: function (req, file, cb) {
         checkFileType(file, cb);
     }
