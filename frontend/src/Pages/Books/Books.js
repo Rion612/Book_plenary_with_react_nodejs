@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { getAllBooks, getAllCategories } from "../../Actions";
-import { Latestdata } from "../../Commonfiles/Data/Data";
 import Card from "../../Components/Card/card";
 import Footer from "../../Components/Footer/Footer";
 import Layout from "../../Components/Layouts/Layout";
@@ -22,7 +21,7 @@ const Book = (props) => {
 
   const totalBooks = book.books;
   const [pageNumber, setpageNumber] = useState(0);
-  const bookPerPage = 6;
+  const bookPerPage = 10;
   const pageVisited = pageNumber * bookPerPage;
   const pageCount = Math.ceil(totalBooks.length / bookPerPage);
   useEffect(() => {

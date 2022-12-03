@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../Components/Layouts/Layout";
-import { FaBook, FaStar, FaWpforms } from "react-icons/fa";
+import { FaBook, FaStar, FaWpforms, FaBookReader } from "react-icons/fa";
 import { GoPerson } from "react-icons/go";
 import { MdCategory } from "react-icons/md";
 import { CgDetailsMore } from "react-icons/cg";
@@ -15,6 +15,9 @@ import { useHistory } from "react-router";
 import Accordion from "../../Components/Accordion/Accordion";
 import Footer from "../../Components/Footer/Footer";
 import ReactHtmlParser from "react-html-parser";
+import {FiDownload} from "react-icons/fi";
+import { BsFillShareFill } from "react-icons/bs";
+import { RiBookmark3Line } from "react-icons/ri"
 
 const BookDetail = (props) => {
   const dispatch = useDispatch();
@@ -38,14 +41,9 @@ const BookDetail = (props) => {
   const token = localStorage.getItem("access_token");
   const reviewComments = rv.filter((x) => x.book_id == props.match.params.id);
 
-  useEffect(async () => {
+  useEffect(() => {
     try {
-      const res = await axios.get(
-        `/get/book/${props.match.params.id}/categories`
-      );
-      if (res.status === 200) {
-        setCateList(res.data.categories);
-      }
+      setCateList(b.categories)
     } catch (error) {
       console.log(error.message);
     }
@@ -132,29 +130,30 @@ const BookDetail = (props) => {
           <div className="bookImageDiv">
             <img
               src={imgUrl + b?.bookImage}
-              alt="Book Image"
-              width="250px"
-              height="350px"
+              alt= "BookImage"
+              width="180px"
+              height="190px"
               style={{ boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.5)" }}
             />
           </div>
           <div className="bookInfo">
             <div style={{ display: "flex" }}>
-              <FaBook size={30} color={"#19626a"} />
+              <FaBook size={20} color={"#19626a"} />
               <p>{b?.name}</p>
               <div style={{ paddingLeft: "20px" }}>
-                <RateStar size="30" rating={getRatingValue()} />
+                <RateStar size="20" rating={getRatingValue()} />
               </div>
             </div>
             <div style={{ display: "flex", marginTop: "10px" }}>
-              <GoPerson size={25} color={"#19626a"} />
-              <p style={{ fontSize: "20px" }}>Author- {b?.writer}</p>
+              <GoPerson size={20} color={"#19626a"} />
+              <p style={{ fontSize: "18px", color: "#19626a" }}>Author -</p>
+              <p style={{ fontSize: "18px" }}>{b?.writer}</p>
             </div>
             <div style={{ display: "flex", marginTop: "10px" }}>
-              <MdCategory size={25} color={"#19626a"} />
+              <MdCategory size={20} color={"#19626a"} />
               <div>
                 <div>
-                  <p style={{ fontSize: "20px" }}>Category</p>
+                  <p style={{ fontSize: "18px", color: "#19626a" }}>Category</p>
                 </div>
                 <div style={{ display: "flex" }}>
                   {cateList.map((item, index) => {
@@ -169,7 +168,27 @@ const BookDetail = (props) => {
                     );
                   })}
                 </div>
+                <div style={{ display: "flex", gap: "10px", marginTop: "20px"}}>
+                  <button className="bookReadAndDownloadButton1">
+                    <FiDownload size={20}/>
+                    <p>Download</p>
+                  </button>
+                  <button className="bookReadAndDownloadButton2">
+                    <FaBookReader size={20} />
+                    <p>Read book</p>
+                  </button>
+                </div>
               </div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "10px"}}>
+            <div className="bookmarkSection">
+              <RiBookmark3Line size={20} color={"blue"}/>
+              <p className="bookmarked">Add to wish list</p>
+            </div>
+            <div className="bookmarkSection">
+              <BsFillShareFill size={20} color={"blue"}/>
+              <p className="bookmarked">Share this book</p>
             </div>
           </div>
         </div>

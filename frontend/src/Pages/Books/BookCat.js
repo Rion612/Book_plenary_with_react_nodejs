@@ -14,22 +14,14 @@ const BookCat = (props) => {
   const dispatch = useDispatch();
   const [bookList, setBookList] = useState([]);
   const category = useSelector((state) => state.category);
+  // const [categoryType, setCategoryType ] = useState("");
   const book = useSelector((state) => state.book);
-  const c = category.categories.find((x) => x.id == props.match.params.id);
-
-  useEffect(async () => {
-    try {
-      const res = await axios.get(
-        `/get/category/${props.match.params.id}/books`
-      );
-      if (res.status === 200) {
-        setBookList(res.data.books);
-      }
-    } catch (error) {
-      console.log(error.message);
+  const books = book.books.filter((item)=>{
+    if(item.categories.find((x)=>x.id == props.match.params.id)){
+      return item;
     }
-  }, []);
-
+  });
+  const categoryType = category.categories.find((y)=> y.id == props.match.params.id)
   useEffect(() => {
     dispatch(getAllCategories());
   }, []);
@@ -44,12 +36,12 @@ const BookCat = (props) => {
           page1="Home"
           route2="/books"
           page2="Books"
-          name={c?.type}
+          name={categoryType.type}
         />
         <h4 className="Booktitle">List of books Per Category</h4>
         <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {bookList.length > 0 ? (
-            bookList?.map((item, index) => {
+          {books.length > 0 ? (
+            books?.map((item, index) => {
               return (
                 <div className="cardRow" key={index}>
                   <Card

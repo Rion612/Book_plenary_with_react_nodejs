@@ -8,7 +8,7 @@ const Card = (props) => {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "center"
         }}
       >
         <img

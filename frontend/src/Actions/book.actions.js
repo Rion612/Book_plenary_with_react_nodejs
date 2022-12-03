@@ -14,7 +14,7 @@ export const getAllBooks = () => {
                     dispatch({
                         type: bookConstants.GET_BOOK_LIST_SUCCESS,
                         payload: {
-                            books : res.data.books
+                            books : res.data.data
                         }
                     })
                 }
