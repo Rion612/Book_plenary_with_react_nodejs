@@ -30,7 +30,7 @@ const Home = (props) => {
         <h4>Top rated books:</h4>
         <br />
         <div className="cardDiv">
-          {/* {book.books.slice(0,4).map((item, index) => {
+          {book.books.slice(book.books.length-4,book.books.length).map((item, index) => {
             return (
               <div className="cardRow" key={index}>
                 <Card
@@ -41,7 +41,7 @@ const Home = (props) => {
                 />
               </div>
             );
-          })} */}
+          })}
         </div>
         <div style={{marginRight: "110px" }}>
           <button onClick={()=>history.push('/books')}>Show more {">>"}</button>
@@ -50,7 +50,7 @@ const Home = (props) => {
         <h4>Latest books:</h4>
         <br />
         <div className="cardDiv">
-          {/* {book.books.slice(4,8).map((item, index) => {
+          {book.books.slice(0,4).map((item, index) => {
             return (
               <div className="cardRow" key={index}>
                 <Card
@@ -61,7 +61,7 @@ const Home = (props) => {
                 />
               </div>
             );
-          })} */}
+          })}
         </div>
         <div style={{marginRight: "110px" }}>
           <button onClick={()=>history.push('/books')}>Show more {">>"}</button>
