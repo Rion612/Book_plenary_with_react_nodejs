@@ -43,5 +43,20 @@ router.get(
   '/get/book/:id',
   BookController.getBookDetails
 )
+router.post(
+  '/submit/review',
+  HelperController.validate,
+  BookController.submitBookReview
+)
+
+router.get(
+  "/get/all/reviews",
+  BookController.getAllReviews
+)
+
+router.get(
+  "/get/reviews/:book_id",
+  BookController.getReviewsByBook
+)
 
 export default router

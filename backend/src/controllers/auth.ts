@@ -3,7 +3,7 @@ import categories from "../models/category";
 import validator from "validatorjs";
 import HelperController from "../helpers/helpers";
 import User from "../models/users";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 class AuthController {
     async signup(req: Request, res: Response) {
         try {
@@ -97,7 +97,7 @@ class AuthController {
                     },
                     secretKey,
                     {
-                        expiresIn: '1h'
+                        expiresIn: '12h'
                     })
                 return res.status(200).send({
                     status: true,

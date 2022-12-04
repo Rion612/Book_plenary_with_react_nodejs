@@ -11,8 +11,12 @@ import fs from 'fs'
 import path from "path";
 import slugify from "slugify";
 import { global_variable } from "../helpers/global_variables";
+import Review, { associateWithUsers } from "../models/reviews";
+import User from "../models/users";
+import moment from "moment";
 associateWithBooks()
 associateWithCategories();
+associateWithUsers();
 class BookController {
     async getAllBooks(req: Request, res: Response) {
         try {
@@ -444,14 +448,101 @@ class BookController {
             })
         }
     }
-    // async getBooksByCategory(req: Request, res: Response) {
-    //     try {
-    //         const id = req.params.category_id;
-    //         const books = await 
-    //     } catch (error) {
+    async submitBookReview(req: Request, res: Response) {
+        try {
+            const rules = {
+                user_id: "required|integer",
+                book_id: "required|integer",
+                rating: "required|integer",
+                review: "required|string"
+            }
+            const validation = new validator(req.body, rules);
+            if (validation.fails()) {
+                return res.status(200).send({
+                    status: false,
+                    message: "Validation errors occured !",
+                    error: validation.errors.all()
+                })
+            }
+            const { user_id, book_id, rating, review } = req.body;
+            const submitReviewObj = { user_id, book_id, rating, review };
+            const submitReview = await Review.create(submitReviewObj);
+            if(!submitReview) {
+                return res.status(500).send({
+                    status: false,
+                    message: "Something went wrong! Please try again later.",
+                    error: {}
+                })
+            }
+            return res.status(200).send({
+                status: true,
+                message: "Review is submitted successfully.",
+                result: submitReview
+            })
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message: "Something went wrong! Please try again later.",
+                error: error
+            })
+        }
+    }
+    async getAllReviews(req: Request, res: Response) {
+        try {
+            const reviews = await Review.findAll({})
+            return res.status(200).send({
+                status: true,
+                message: "Data found.",
+                result: reviews
+            })
+        } catch (error) {
+            return res.status(500).send({
+                status: false,
+                message: "Something went wrong! Please try again later.",
+                error: error
+            })
+        }
+    }
+    async getReviewsByBook(req: Request, res: Response) {
+        try {
+            const reviews = await Review.findAll({ 
+                where: { book_id: req.params.book_id },
+                include: [
+                    {
+                        model: User,
+                        as: "users",
+                        attributes: ['id', 'name']
+                    }
+                ]
+            });
+            let response: any = [];
+            reviews.map((item: any, index) => {
+              response.push({
+                id: item.id,
+                book_id: item.book_id,
+                review: item.review,
+                rating: item.rating,
+                user_id: item.user_id,
+                createdAt: moment(item.createdAt).format("LLLL"),
+                updatedAt: moment(item.updatedAt).format("LLLL"),
+                users: item.users,
+              });
+            });
+            return res.status(200).send({
+                status: true,
+                message: "Data found.",
+                result: response
+            })
+        } catch (error) {
+            console.log(error);
             
-    //     }
-    // }
+            return res.status(500).send({
+                status: false,
+                message: "Something went wrong! Please try again later.",
+                error: error
+            })
+        }
+    }
 
 }
 export default new BookController()
