@@ -26,7 +26,7 @@ const Card = (props) => {
           <b>{props.name}</b>
         </h5>
         <p className="author">By {props.author}</p>
-        <p><RateStar rating={5}/></p>
+        <p><RateStar rating={props.rating}/></p>
       </div>
     </div>
   );

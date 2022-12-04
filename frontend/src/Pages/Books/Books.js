@@ -10,6 +10,7 @@ import CardSide from "../../Components/SideCard/CardSide";
 import { imgUrl } from "../../urlConfig";
 import "./Books.scss";
 import { useLocation } from "react-router-dom";
+import axiosInstance from "../../Helpers/axios";
 
 const Book = (props) => {
   const location = useLocation();
@@ -18,6 +19,7 @@ const Book = (props) => {
   const [searchItem, setSearcItem] = useState("");
   const category = useSelector((state) => state.category);
   const book = useSelector((state) => state.book);
+  const [totalReviews, setTotalReviews ] = useState([]);
 
   const totalBooks = book.books;
   const [pageNumber, setpageNumber] = useState(0);
@@ -30,7 +32,18 @@ const Book = (props) => {
   useEffect(() => {
     dispatch(getAllBooks());
   }, []);
-
+  useEffect(() => {
+    getReviews();
+  }, []);
+  const getReviews = () => {
+    axiosInstance.get("/get/all/reviews")
+    .then((response)=>{
+      setTotalReviews(response.data.result);
+    })
+    .catch((error)=> {
+      console.log(error)
+    })
+  }
   const categoryHandle = (item) => {
     history.push(`/books/category/${item.id}`);
   };
@@ -39,6 +52,14 @@ const Book = (props) => {
   };
   const changePage = ({ selected }) => {
     setpageNumber(selected);
+  };
+  const getRatingValue = (reviews) => {
+    let r = 0;
+    let count = reviews.length;
+    reviews.forEach((item, index) => {
+      r = r + item.rating;
+    });
+    return Math.round(r / count);
   };
   return (
     <Layout>
@@ -72,12 +93,14 @@ const Book = (props) => {
                   }
                 })
                 .map((item, index) => {
+                  const r = totalReviews.filter((x)=> x.book_id == item.id)
                   return (
                     <div className="cardRow" key={index}>
                       <Card
                         name={item?.name}
                         author={item?.writer}
                         image={imgUrl + item?.bookImage}
+                        rating= {getRatingValue(r)}
                         onClick={() => bookHandle(item)}
                       />
                     </div>
@@ -116,12 +139,14 @@ const Book = (props) => {
             <div className="bookContent21">
               <h4 className="Booktitle">Recent added books</h4>
               {book.books.slice(0, 2).reverse().map((item, index) => {
+                const r = totalReviews.filter((x)=> x.book_id == item.id)
                 return (
                   <div className="cardRow" key={index}>
                     <Card
                       name={item?.name}
                       author={item?.writer}
                       image={imgUrl + item?.bookImage}
+                      rating={getRatingValue(r)}
                       onClick={() => bookHandle(item)}
                     />
                   </div>

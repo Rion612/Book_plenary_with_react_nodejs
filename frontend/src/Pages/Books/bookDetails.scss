@@ -125,3 +125,22 @@ textarea {
   height: 30px;
   cursor: pointer;
 }
+
+.modalTitle {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modalCloseBtn {
+  border: none;
+  background-color: white;
+  cursor: pointer;
+}
+
+.modalBody {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+}

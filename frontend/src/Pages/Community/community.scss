@@ -1,0 +1,17 @@
+.communityRootDiv {
+    padding: 50px;
+}
+.clubImage {
+    width: 200px;
+    height: 200px;
+}
+.clubInfoHolder {
+    display: flex;
+    margin-top: 20px;
+    gap: 30px;
+    // box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.clubInfoText {
+    text-align: justify;
+    padding-right: 30px;
+}

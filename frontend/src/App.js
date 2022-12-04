@@ -1,6 +1,6 @@
 import "./App.css";
 import Register from "./Pages/Register/Register";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./Pages/Home/Home";
 import Login from "./Pages/Login/Login";
 import Books from "./Pages/Books/Books";
@@ -19,6 +19,7 @@ import BookDetail from "./Pages/Books/BookDetails";
 import Verify from "./Pages/Verify/Verify";
 import PrivateRoute from "./Components/Hook/privateRoute";
 import updateBook from "./Pages/Admin/Books/UpdateBook";
+import Community from "./Pages/Community/Community";
 
 
 function App() {
@@ -47,7 +48,8 @@ function App() {
         <Route path="/admin/create/books" component={CreateBook} />
         <Route path="/admin/update/books/:id" exact component={updateBook} />
         <Route path="/books/category/:id" exact component={BookCat} />
-        <Route path="/book/details/:id" exact component={BookDetail} />
+        <PrivateRoute path="/book/details/:id" exact component={BookDetail} />
+        <Route path="/facebook/community" exact component={Community} />
       </Switch>
     </div>
   );

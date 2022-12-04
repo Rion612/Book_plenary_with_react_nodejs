@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, NavLink, useHistory } from "react-router-dom";
-import { logout } from "../../Actions/user.actions";
-import axios from "../../Helpers/axios";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, NavLink } from "react-router-dom";
 import Dropdown from "../Dropdown/Dropdown";
 import "./Header.scss";
 const Header = (props) => {
   const [dropdown, setDropdown] = useState(false);
-  const history = useHistory();
   const user = useSelector((state) => state.user);
-  const token = localStorage.getItem("access_token");
-  const dispatch = useDispatch();
 
   
   return (
@@ -44,14 +39,7 @@ const Header = (props) => {
               <li>Books</li>
             </NavLink>
             <NavLink
-              to="/books"
-              activeStyle={{ color: "blue" }}
-              className="nav-link"
-            >
-              <li>Contact</li>
-            </NavLink>
-            <NavLink
-              to="/books"
+              to="/facebook/community"
               activeStyle={{ color: "blue" }}
               className="nav-link"
             >

@@ -18,8 +18,22 @@ import ReactHtmlParser from "react-html-parser";
 import {FiDownload} from "react-icons/fi";
 import { BsFillShareFill } from "react-icons/bs";
 import { RiBookmark3Line } from "react-icons/ri";
-import path from "path";
-import fs from "fs"
+import { AiOutlineCloseSquare } from "react-icons/ai"
+import Modal from 'react-modal';
+import {
+  EmailIcon,
+  EmailShareButton,
+  FacebookIcon,
+  FacebookMessengerIcon,
+  FacebookShareButton,
+  FacebookMessengerShareButton,
+  PinterestIcon,
+  PinterestShareButton,
+  TelegramIcon,
+  TelegramShareButton,
+  TwitterIcon,
+  TwitterShareButton
+} from "react-share";
 
 const BookDetail = (props) => {
   const dispatch = useDispatch();
@@ -36,12 +50,37 @@ const BookDetail = (props) => {
   const [failureMessage, setFailureMessage] = useState(false);
   const [sucessMessage, setSuccessMessage] = useState(false);
   const [render,setRender] = useState(false);
-  const rv = useSelector((state) => state.review.reviews);
+  const reviews = useSelector((state) => state.review.reviews);
   const book_id = props.match.params.id;
   const user_id = user?.user?.id;
   const b = book.books.find((x) => x.id == props.match.params.id);
   const token = localStorage.getItem("access_token");
-  const reviewComments = rv.filter((x) => x.book_id == props.match.params.id);
+  // const reviewComments = rv.filter((x) => x.book_id == props.match.params.id);
+
+  const title = "This is a great book. I suggest you to read this at your convenient time."
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      border: '1px solid black',
+      width: '400px'
+    },
+  };
+
+  Modal.setAppElement('#root');
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
 
   useEffect(() => {
     try {
@@ -57,18 +96,8 @@ const BookDetail = (props) => {
     dispatch(getAllBooks());
   }, []);
   useEffect(() => {
-    dispatch(getAllReviews());
+    dispatch(getAllReviews(props.match.params.id));
   }, [render]);
-  // useEffect(async () => {
-  //   try {
-  //     const res = await axios.get("/get/all/users");
-  //     if (res.status === 200) {
-  //       setUsersList(res.data.users);
-  //     }
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // }, []);
   const categoryHandle = (item) => {
     history.push(`/books/category/${item.id}`);
   };
@@ -94,6 +123,7 @@ const BookDetail = (props) => {
       review,
       user_id,
     };
+    console.log(obj)
     if (rating == null) {
       setRatingValid(false);
       setReviewValid(true);
@@ -104,7 +134,7 @@ const BookDetail = (props) => {
       setReviewValid(true);
       setRatingValid(true);
       try {
-        const res = await axios.post("/user/submit/review", obj, {
+        const res = await axios.post("/submit/review", obj, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -126,8 +156,8 @@ const BookDetail = (props) => {
   };
   const getRatingValue = () => {
     let r = 0;
-    let count = reviewComments.length;
-    reviewComments.forEach((item, index) => {
+    let count = reviews.length;
+    reviews.forEach((item, index) => {
       r = r + item.rating;
     });
     return Math.round(r / count);
@@ -146,7 +176,7 @@ const BookDetail = (props) => {
           <div className="bookImageDiv">
             <img
               src={imgUrl + b?.bookImage}
-              alt= "BookImage"
+              alt="BookImage"
               width="180px"
               height="190px"
               style={{ boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.5)" }}
@@ -184,15 +214,20 @@ const BookDetail = (props) => {
                     );
                   })}
                 </div>
-                <div style={{ display: "flex", gap: "10px", marginTop: "20px"}}>
-                  <button className="bookReadAndDownloadButton1"
-                    onClick={()=>downloadBook(b?.bookFile)}
+                <div
+                  style={{ display: "flex", gap: "10px", marginTop: "20px" }}
+                >
+                  <button
+                    className="bookReadAndDownloadButton1"
+                    onClick={() => downloadBook(b?.bookFile)}
                   >
-                    <FiDownload size={20}/>
+                    <FiDownload size={20} />
                     <p>Download</p>
                   </button>
-                  <button className="bookReadAndDownloadButton2"
-                  onClick={()=>window.open(imgUrl + b?.bookFile)}>
+                  <button
+                    className="bookReadAndDownloadButton2"
+                    onClick={() => window.open(imgUrl + b?.bookFile)}
+                  >
                     <FaBookReader size={20} />
                     <p>Read book</p>
                   </button>
@@ -200,13 +235,13 @@ const BookDetail = (props) => {
               </div>
             </div>
           </div>
-          <div style={{ display: "flex", gap: "10px"}}>
+          <div style={{ display: "flex", gap: "10px" }}>
             <div className="bookmarkSection">
-              <RiBookmark3Line size={20} color={"blue"}/>
+              <RiBookmark3Line size={20} color={"blue"} />
               <p className="bookmarked">Add to wish list</p>
             </div>
-            <div className="bookmarkSection">
-              <BsFillShareFill size={20} color={"blue"}/>
+            <div className="bookmarkSection" onClick={openModal}>
+              <BsFillShareFill size={20} color={"blue"} />
               <p className="bookmarked">Share this book</p>
             </div>
           </div>
@@ -220,17 +255,17 @@ const BookDetail = (props) => {
             {ReactHtmlParser(b?.description)}
           </Accordion>
         </div>
+        {/* All the reviews */}
         <div style={{ marginTop: "30px" }}>
           <Accordion
             icon={<FaStar size={20} />}
             headtitle={"All reviews"}
             status={true}
           >
-            {reviewComments.length > 0 ? (
-              reviewComments.map((item, index) => {
-                const u = usersList.find((x) => x.id == item.user_id);
+            {reviews?.length > 0 ? (
+              reviews.map((item, index) => {
                 return (
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: "flex" }} key={index}>
                     <div>
                       <img
                         src={process.env.PUBLIC_URL + "/avater.png"}
@@ -242,16 +277,16 @@ const BookDetail = (props) => {
                     <div>
                       <div style={{ display: "flex" }}>
                         <div style={{ padding: "10px" }}>
-                          <h5>{u?.name}</h5>
+                          <h5>{item.users.name}</h5>
                         </div>
                         <div style={{ padding: "10px" }}>
-                          <RateStar rating={item?.rating} />
+                          <RateStar rating={item.rating} />
                         </div>
                       </div>
                       <div style={{ padding: "10px", fontSize: "12px" }}>
-                        Date: {(item?.created_at).split(" ")[0]}
+                        Date: {item.createdAt}
                       </div>
-                      <div style={{ padding: "10px" }}>{item?.review}</div>
+                      <div style={{ padding: "10px" }}>{item.review}</div>
                     </div>
                   </div>
                 );
@@ -261,6 +296,7 @@ const BookDetail = (props) => {
             )}
           </Accordion>
         </div>
+        {/* Submit your review */}
         <div style={{ marginTop: "30px" }}>
           <Accordion
             status={true}
@@ -338,6 +374,42 @@ const BookDetail = (props) => {
               </button>
             </div>
           </Accordion>
+        </div>
+        {/* Modal for share */}
+        <div>
+          <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            style={customStyles}
+            contentLabel="Example Modal"
+          >
+            <div className="modalTitle">
+              <h4>Share the book</h4>
+              <button onClick={closeModal} className="modalCloseBtn">
+                <AiOutlineCloseSquare size={20} />
+              </button>
+            </div>
+            <div className="modalBody">
+              <FacebookMessengerShareButton url={imgUrl + b?.bookFile} title={title}>
+                <FacebookMessengerIcon size={32}/>
+              </FacebookMessengerShareButton>
+              <EmailShareButton url={imgUrl + b?.bookFile} title={title}>
+                <EmailIcon size={32}/>
+              </EmailShareButton>
+              <TelegramShareButton url={imgUrl + b?.bookFile} title={title}>
+                <TelegramIcon size={32} />
+              </TelegramShareButton>
+              <PinterestShareButton media={imgUrl + b?.bookFile} description={title}>
+                <PinterestIcon size={32} />
+              </PinterestShareButton>
+              <FacebookShareButton url={imgUrl + b?.bookFile} title={title}>
+                <FacebookIcon size={32} />
+              </FacebookShareButton>
+              <TwitterShareButton url={imgUrl + b?.bookFile} title={title}>
+                <TwitterIcon size={32} />
+              </TwitterShareButton>
+            </div>
+          </Modal>
         </div>
       </div>
       <Footer />
