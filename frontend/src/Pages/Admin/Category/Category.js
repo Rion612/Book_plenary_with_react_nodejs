@@ -135,7 +135,6 @@ const Category = () => {
     <AdminLayout>
       <div className="containerAdmin">
         <div className="categoryDiv">
-          <Modal />
           <div className="addCategory">
             <ToastContainer position="bottom-right" theme={"colored"} />
             <Input
